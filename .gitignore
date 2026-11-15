@@ -1,0 +1,23 @@
+# Secrets locaux
+.env
+
+# Java / Maven
+target/
+*.class
+*.log
+
+# Node / React
+node_modules/
+dist/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Système
+.DS_Store
+Thumbs.db
+
+# Fichiers uploadés
+uploads/
