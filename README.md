@@ -95,45 +95,46 @@ Conventions pour les entités JPA :
 - Un `ADMIN` n'a pas d'établissement, les autres rôles en ont un.
 - Ne jamais modifier une migration déjà appliquée : créer une `V3__...sql`.
 
-## Comptes de démo 
- Email	| Rôle	| Établissement |
- |---|---|---|
-|admin@tutofac.fr |	ADMIN |	– |
-|gestionnaire.spn@tutofac.fr |	GESTIONNAIRE |	Sorbonne Paris Nord |
-|gestionnaire.nanterre@tutofac.fr |	GESTIONNAIRE |	Paris Nanterre |
-|gestionnaire.cite@tutofac.fr |	GESTIONNAIRE	| Paris Cité |
-|tuteur1@ à tuteur4@tutofac.fr	| TUTEUR	| SPN, Nanterre, Cité, SPN |
-|etudiant1@ à etudiant4@tutofac.fr	| ETUDIANT | Nanterre, Nanterre, Cité, SPN |
+#### Comptes de démo
 
-## API *(à compléter)*
+Mot de passe commun : `Demo1234!`
 
-## Tests *(à compléter)*
+| Email | Rôle | Établissement |
+|---|---|---|
+| `admin@tutofac.fr` | ADMIN | aucun |
+| `gestionnaire.spn@tutofac.fr` | GESTIONNAIRE | Sorbonne Paris Nord |
+| `gestionnaire.nanterre@tutofac.fr` | GESTIONNAIRE | Paris Nanterre |
+| `gestionnaire.cite@tutofac.fr` | GESTIONNAIRE | Paris Cité |
+| `tuteur1@tutofac.fr` à `tuteur4@tutofac.fr` | TUTEUR | SPN, Nanterre, Cité, SPN |
+| `etudiant1@tutofac.fr` à `etudiant4@tutofac.fr` | ETUDIANT | Nanterre, Nanterre, Cité, SPN |
+
+`tuteur4` est en statut `EN_ATTENTE` pour démontrer la validation d'un profil.
+
+## API
+
+L'API tourne sur `http://localhost:8080`. Les routes protégées demandent
+l'en-tête `Authorization: Bearer <token>`. Les erreurs ont la forme
+`{"status": 403, "message": "Accès refusé"}`.
+
+Exemple :
 
 ```bash
-cd backend && mvn test
+TOKEN=$(curl -s -X POST localhost:8080/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"admin@tutofac.fr","motDePasse":"Demo1234!"}' \
+  | grep -o '"token":"[^"]*"' | cut -d'"' -f4)
+curl localhost:8080/api/utilisateurs/me -H "Authorization: Bearer $TOKEN"
 ```
 
-## Structure du dépôt
 
-```
-tutofac/
-├── docker-compose.yml
-├── .env.example
-├── backend/                  Spring Boot (Java 21, Maven)
-│   └── src/main/java/fr/tutofac/
-│       ├── config/           sécurité, CORS
-│       ├── auth/             login, JWT, rôles
-│       ├── etablissement/
-│       ├── utilisateur/
-│       ├── tuteur/           profil, relevés, validation
-│       ├── disponibilite/
-│       ├── besoin/           besoins et recherche
-│       ├── seance/           affectation, planning
-│       └── notification/
-│   └── src/main/resources/db/migration/
-├── frontend/                 React + Vite
-└── docs/                     cahier des charges, guide, plaquette, rapports
-```
+## Avancement
+
+| Partie | État |
+|---|---|
+| 1. Socle, sécurité, comptes | Terminée : schéma Flyway, seed, Docker, JWT, rôles, établissements, utilisateurs, gestion d'erreurs |
+| 2. Tuteurs et disponibilités | À faire |
+| 3. Besoins, recherche, affectation | À faire |
+| 4. Front global, notifications | À faire |
 
 ## Équipe
 
