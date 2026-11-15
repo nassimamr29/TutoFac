@@ -81,7 +81,7 @@ Le schéma est géré uniquement par Flyway :
 | Migration | Contenu |
 |---|---|
 | `V1__init.sql` | Schéma complet du MVP (9 tables) |
-| `V2__seed.sql` | Données de démo *(à compléter)* |
+| `V2__seed.sql` | Données de démo |
 
 Tables : `etablissement`, `utilisateur`, `matiere`, `profil_tuteur`,
 `profil_tuteur_matiere`, `disponibilite`, `besoin_tutorat`, `seance`,
@@ -95,7 +95,15 @@ Conventions pour les entités JPA :
 - Un `ADMIN` n'a pas d'établissement, les autres rôles en ont un.
 - Ne jamais modifier une migration déjà appliquée : créer une `V3__...sql`.
 
-## Comptes de démo *(à compléter avec V2__seed.sql)*
+## Comptes de démo 
+ Email	| Rôle	| Établissement |
+ |---|---|---|
+|admin@tutofac.fr |	ADMIN |	– |
+|gestionnaire.spn@tutofac.fr |	GESTIONNAIRE |	Sorbonne Paris Nord |
+|gestionnaire.nanterre@tutofac.fr |	GESTIONNAIRE |	Paris Nanterre |
+|gestionnaire.cite@tutofac.fr |	GESTIONNAIRE	| Paris Cité |
+|tuteur1@ à tuteur4@tutofac.fr	| TUTEUR	| SPN, Nanterre, Cité, SPN |
+|etudiant1@ à etudiant4@tutofac.fr	| ETUDIANT | Nanterre, Nanterre, Cité, SPN |
 
 ## API *(à compléter)*
 
