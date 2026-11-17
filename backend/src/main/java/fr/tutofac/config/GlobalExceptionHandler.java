@@ -9,6 +9,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import java.util.stream.Collectors;
 
@@ -57,5 +58,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ErreurApi> integrite(DataIntegrityViolationException e) {
         return reponse(HttpStatus.CONFLICT, "Opération impossible : données liées ou en doublon");
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<ErreurApi> fichierTropVolumineux(MaxUploadSizeExceededException e) {
+        return reponse(HttpStatus.PAYLOAD_TOO_LARGE, "Le relevé de notes ne peut pas dépasser 5 Mo");
     }
 }
