@@ -1,11 +1,13 @@
 package fr.tutofac.besoin;
 
 import jakarta.validation.Valid;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -14,9 +16,13 @@ import java.util.List;
 public class BesoinController {
 
     private final BesoinService service;
+    private final RechercheTuteurService rechercheService;
 
-    public BesoinController(BesoinService service) {
+    public BesoinController(
+            BesoinService service,
+            RechercheTuteurService rechercheService) {
         this.service = service;
+        this.rechercheService = rechercheService;
     }
 
     // Liste les besoins de l'établissement connecté
@@ -31,21 +37,33 @@ public class BesoinController {
         return service.trouver(id);
     }
 
-    // Crée un nouveau besoin
+    // Crée un besoin
     @PostMapping
     public ResponseEntity<BesoinDto> creer(
             @Valid @RequestBody BesoinRequest request) {
 
-        BesoinDto besoin = service.creer(request);
-
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(besoin);
+                .body(service.creer(request));
     }
 
     // Annule un besoin
     @PatchMapping("/{id}/annuler")
     public BesoinDto annuler(@PathVariable Long id) {
         return service.annuler(id);
+    }
+
+    // Recherche les tuteurs disponibles pour un besoin et un créneau
+    @GetMapping("/{id}/tuteurs")
+    public List<TuteurRechercheDto> rechercherTuteurs(
+            @PathVariable Long id,
+            @RequestParam
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+            LocalDateTime debut,
+            @RequestParam
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+            LocalDateTime fin) {
+
+        return rechercheService.rechercher(id, debut, fin);
     }
 }
