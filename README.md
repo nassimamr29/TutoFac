@@ -21,7 +21,7 @@ Projet du Master Informatique (P2S), Université Sorbonne Paris Nord, 2026-2027.
 |---|---|
 | Backend | Java 21, Spring Boot 3, Spring Security (JWT), Spring Data JPA |
 | Base de données | PostgreSQL 16, migrations Flyway |
-| Frontend | React + Vite *(en cours)* |
+| Frontend | React + Vite |
 | Déploiement | Docker, Docker Compose |
 
 
@@ -52,11 +52,22 @@ Projet du Master Informatique (P2S), Université Sorbonne Paris Nord, 2026-2027.
    Le backend attend que PostgreSQL soit prêt, puis Flyway crée le schéma
    automatiquement au démarrage.
 
-4. Arrêter :
+4. Dans un second terminal, lancer le frontend :
+
+   ```bash
+   cd frontend
+   npm install
+   npm run dev
+   ```
+
+   Ouvrir `http://localhost:5173` et se connecter avec un compte TUTEUR de
+   démonstration, par exemple `tuteur1@tutofac.fr` / `Demo1234!`.
+
+5. Arrêter :
 
    ```bash
    docker compose down        # conserve les données
-   docker compose down -v     # supprime aussi la base (repart de zéro)
+   docker compose down -v     # supprime la base et les relevés (repart de zéro)
    ```
 
 ## Configuration
@@ -72,6 +83,7 @@ jamais commité).
 
 La base est exposée sur le port **5433** de la machine (5432 dans le réseau
 Docker), pour éviter un conflit avec un PostgreSQL installé en local.
+Les relevés PDF sont limités à 5 Mo et conservés dans le volume Docker `releves`.
 
 ## Base de données
 
@@ -127,15 +139,43 @@ curl localhost:8080/api/utilisateurs/me -H "Authorization: Bearer $TOKEN"
 ```
 
 
+### Routes tuteurs et disponibilités
+
+| Méthode | Route | Accès |
+|---|---|---|
+| `GET` | `/api/matieres` | Utilisateur authentifié |
+| `GET`, `PUT` | `/api/tuteurs/me` | Tuteur |
+| `POST` | `/api/tuteurs/me/releve` | Tuteur, multipart `fichier` PDF ≤ 5 Mo |
+| `GET` | `/api/tuteurs/a-valider` | Gestionnaire, établissement courant |
+| `POST` | `/api/tuteurs/{id}/decision` | Gestionnaire du même établissement |
+| `GET`, `POST`, `PUT`, `DELETE` | `/api/disponibilites` | Tuteur, uniquement ses créneaux |
+
+Une décision de validation se fait avec `{"decision":"VALIDE"}`. Pour refuser,
+envoyer `{"decision":"REFUSE","motifRefus":"..."}`. Une disponibilité
+hebdomadaire utilise `recurrence: "HEBDOMADAIRE"` et une `finRecurrence` au
+format `YYYY-MM-DD`; un créneau ponctuel utilise `recurrence: "AUCUNE"`.
+
+### Fonctionnalités de la partie 2
+
+- Le tuteur complète son profil (formation, niveau d'études et matières) et
+  dépose son relevé de notes au format PDF.
+- Le gestionnaire consulte les profils à valider de son établissement et peut
+  les valider ou les refuser avec un motif.
+- Le tuteur crée, modifie et supprime ses disponibilités ponctuelles ou
+  hebdomadaires. Les horaires invalides et les chevauchements sont refusés.
+- Les pages et la navigation tiennent compte du rôle connecté : les pages de
+  profil et de disponibilités sont réservées aux tuteurs. Les autres rôles
+  arrivent sur leur espace d'accueil.
+
 ## Avancement
 
 | Partie | État |
 |---|---|
 | 1. Socle, sécurité, comptes | Terminée : schéma Flyway, seed, Docker, JWT, rôles, établissements, utilisateurs, gestion d'erreurs |
-| 2. Tuteurs et disponibilités | À faire |
+| 2. Tuteurs et disponibilités | Terminée : profils, validation par établissement, relevés PDF, matières et créneaux ponctuels/hebdomadaires |
 | 3. Besoins, recherche, affectation | À faire |
 | 4. Front global, notifications | À faire |
 
 ## Équipe
 
-Nassim Amrouche, Yassine Berriche, Rayane Herkati, Saad Mimouni.
+Nassim Amrouche, Yassine Berriche, Rayane Harkati, Saad Mimouni.

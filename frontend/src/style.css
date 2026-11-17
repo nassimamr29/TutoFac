@@ -1,0 +1,165 @@
+:root {
+  font-family: system-ui, sans-serif;
+  color: #172554;
+  background: #f5f7fb;
+  font-synthesis: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button {
+  width: fit-content;
+  border: 0;
+  border-radius: 0.4rem;
+  padding: 0.65rem 1rem;
+  color: white;
+  background: #1d4ed8;
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+input,
+select {
+  width: 100%;
+  margin-top: 0.35rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.35rem;
+  padding: 0.55rem;
+  background: white;
+}
+
+label {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem max(1.25rem, calc((100% - 960px) / 2));
+  background: white;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.brand {
+  color: #1d4ed8;
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+nav,
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+nav a {
+  color: #1e293b;
+}
+
+.page,
+.narrow-page {
+  width: min(100% - 2rem, 960px);
+  margin: 2rem auto;
+}
+
+.narrow-page {
+  max-width: 440px;
+}
+
+.panel {
+  margin: 1rem 0;
+  padding: 1.25rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.6rem;
+  background: white;
+}
+
+.form-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+fieldset {
+  display: grid;
+  gap: 0.6rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.4rem;
+}
+
+.choice {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.choice input {
+  width: auto;
+  margin: 0;
+}
+
+.slot-list {
+  margin-top: 2rem;
+}
+
+.slot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.slot p,
+.panel p {
+  margin-bottom: 0;
+}
+
+.secondary {
+  color: #1e293b;
+  background: #e2e8f0;
+}
+
+.danger {
+  background: #b91c1c;
+}
+
+.error {
+  color: #b91c1c;
+}
+
+.success {
+  color: #15803d;
+}
+
+@media (max-width: 600px) {
+  .navbar,
+  .slot {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  nav,
+  .actions {
+    flex-wrap: wrap;
+  }
+}
