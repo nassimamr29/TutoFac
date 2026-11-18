@@ -502,10 +502,16 @@ La compilation du frontend peut être vérifiée avec :
 npm run build --prefix frontend
 ```
 
-Les tests du backend peuvent être lancés depuis le dossier `backend` :
+Les tests du backend demandent Java 21. Sans JDK 21 installé, ils se lancent dans un conteneur Maven, depuis la racine du projet :
 
 ```bash
-./mvnw test
+docker run --rm -v "$PWD/backend":/app -w /app maven:3.9-eclipse-temurin-21 mvn test
+```
+
+Avec Java 21 et Maven installés, depuis le dossier `backend` :
+
+```bash
+mvn test
 ```
 
 Les fonctionnalités suivantes ont fait l'objet de vérifications manuelles :
