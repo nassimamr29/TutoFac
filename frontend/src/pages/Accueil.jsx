@@ -5,10 +5,10 @@ const MESSAGES_PAR_ROLE = {
     titre: "Espace étudiant",
     message: "Votre espace étudiant n’est pas encore disponible dans cette version.",
   },
-  GESTIONNAIRE: {
-    titre: "Espace gestionnaire",
-    message: "L’interface de gestionnaire n’est pas encore disponible dans cette version.",
-  },
+ GESTIONNAIRE: {
+  titre: "Espace gestionnaire",
+  message: "Bienvenue dans votre espace de gestion du tutorat. Utilisez le menu de navigation pour gérer les besoins, rechercher des tuteurs disponibles et organiser les séances.",
+},
   ADMIN: {
     titre: "Espace administrateur",
     message: "L’interface d’administration n’est pas encore disponible dans cette version.",
