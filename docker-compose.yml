@@ -26,14 +26,30 @@ services:
       DB_PASSWORD: ${POSTGRES_PASSWORD}
       JWT_SECRET: ${JWT_SECRET}
       JWT_EXPIRATION_MS: ${JWT_EXPIRATION_MS}
+      # Front Docker (3000) et front Vite en dev (5173)
+      APP_CORS_ALLOWED_ORIGINS: http://localhost:3000,http://localhost:5173
+      MAIL_HOST: mailpit
+      MAIL_PORT: 1025
     volumes:
       - releves:/app/uploads/releves
     ports:
       - "8080:8080"
 
-  # TODO frontend (partie 4)
+  # Front React buildé, servi par Nginx qui relaie /api vers le backend
+  frontend:
+    build: ./frontend
+    depends_on:
+      - backend
+    ports:
+      - "3000:80"
 
-  
+  # Faux serveur SMTP de dev : les mails envoyés sont visibles sur http://localhost:8025
+  mailpit:
+    image: axllent/mailpit:v1.21
+    ports:
+      - "8025:8025"
+      # SMTP accessible aussi pour un backend lancé hors Docker (mvn spring-boot:run)
+      - "1025:1025"
 
 volumes:
   pgdata:

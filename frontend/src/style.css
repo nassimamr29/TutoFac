@@ -187,6 +187,13 @@ nav {
   white-space: nowrap;
 }
 
+.nav-etablissement {
+  margin-left: 0.5rem;
+  color: #617087;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
 /* ==========================================
    CONTENEURS GÉNÉRAUX
    ========================================== */

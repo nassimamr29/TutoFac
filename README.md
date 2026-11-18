@@ -48,16 +48,20 @@ La branche `develop` contient les développements intégrés de l'équipe.
 
 ### 2. Configurer les variables d'environnement
 
-Créer un fichier `.env` à la racine du projet avec les variables attendues par Docker Compose.
+Créer le fichier `.env` à la racine du projet à partir de l'exemple fourni, qui contient des valeurs de démonstration :
 
-Les principales variables sont :
+```bash
+cp .env.example .env
+```
+
+Les variables sont :
 
 | Variable | Description |
 |---|---|
 | `POSTGRES_DB` | Nom de la base de données |
 | `POSTGRES_USER` | Utilisateur PostgreSQL |
 | `POSTGRES_PASSWORD` | Mot de passe PostgreSQL |
-| `JWT_SECRET` | Clé utilisée pour signer les tokens JWT |
+| `JWT_SECRET` | Clé utilisée pour signer les tokens JWT (32 caractères minimum) |
 | `JWT_EXPIRATION_MS` | Durée de validité des tokens JWT |
 
 Le fichier `.env` contient des informations sensibles et ne doit pas être envoyé sur GitHub.
@@ -90,9 +94,16 @@ http://localhost:8080
 
 PostgreSQL est accessible sur le port `5433` de la machine hôte.
 
-### 4. Démarrer le frontend
+`docker compose` démarre aussi :
 
-Dans un second terminal :
+| Service | Adresse | Rôle |
+|---|---|---|
+| frontend | http://localhost:3000 | Front React buildé, servi par Nginx qui relaie `/api` vers le backend |
+| mailpit | http://localhost:8025 | Boîte mail de test : tous les e-mails envoyés par TutoFac y apparaissent |
+
+### 4. Démarrer le frontend en mode développement (optionnel)
+
+Le front est déjà servi sur le port 3000 par Docker. Pour développer avec rechargement à chaud, dans un second terminal :
 
 ```bash
 cd frontend
@@ -474,6 +485,19 @@ L'interface graphique adopte une présentation commune avec :
 - Des tableaux de consultation.
 - Une mise en page responsive.
 
+## Notifications par e-mail
+
+Le module `notification/` envoie des e-mails en texte brut (Spring Mail). En local, ils sont capturés par Mailpit et visibles sur http://localhost:8025.
+
+| Événement | Destinataires | Déclenchement |
+|---|---|---|
+| Affectation | Tuteur et étudiants inscrits | Création d'une séance (`POST /api/seances`) |
+| Rappel | Tuteur et étudiants inscrits | Chaque jour à 18h, pour les séances planifiées du lendemain |
+| Modification | Tuteur et étudiants inscrits | `NotificationService.notifierModification(seance)` |
+| Annulation | Tuteur et étudiants inscrits | `NotificationService.notifierAnnulation(seance)` |
+
+Les e-mails partent seulement après la validation de la transaction, et un échec d'envoi est journalisé sans faire échouer l'action. Variables : `MAIL_HOST`, `MAIL_PORT`, `MAIL_FROM`, `MAIL_RAPPEL_CRON`.
+
 ## Tests et vérifications
 
 La compilation du frontend peut être vérifiée avec :
@@ -482,10 +506,16 @@ La compilation du frontend peut être vérifiée avec :
 npm run build --prefix frontend
 ```
 
-Les tests du backend peuvent être lancés depuis le dossier `backend` :
+Les tests du backend demandent Java 21. Sans JDK 21 installé, ils se lancent dans un conteneur Maven, depuis la racine du projet :
 
 ```bash
-./mvnw test
+docker run --rm -v "$PWD/backend":/app -w /app maven:3.9-eclipse-temurin-21 mvn test
+```
+
+Avec Java 21 et Maven installés, depuis le dossier `backend` :
+
+```bash
+mvn test
 ```
 
 Les fonctionnalités suivantes ont fait l'objet de vérifications manuelles :
@@ -517,7 +547,7 @@ Les fonctionnalités suivantes ont fait l'objet de vérifications manuelles :
 | 2. Tuteurs et disponibilités | Implémentée : profils académiques, matières, disponibilités, API de validation et interface gestionnaire |
 | 3. Besoins, recherche et affectation | Implémentée : gestion des besoins, recherche inter-établissements, création et suivi des séances |
 | 4. Frontend global et navigation | Implémentée : connexion, navigation par rôle, tableaux de bord, pages gestionnaire, administrateur et étudiant |
-| Notifications et fonctionnalités complémentaires | Non finalisées |
+| 4. Notifications | Implémentée : e-mails d'affectation, rappel, modification et annulation (Mailpit en local) |
 
 Les fonctionnalités principales du MVP sont intégrées. Certains parcours restent à tester ou à compléter avant la livraison définitive.
 

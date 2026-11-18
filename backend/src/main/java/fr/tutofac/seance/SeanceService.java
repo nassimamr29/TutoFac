@@ -6,6 +6,7 @@ import fr.tutofac.besoin.BesoinRepository;
 import fr.tutofac.besoin.RechercheTuteurService;
 import fr.tutofac.config.ConflictException;
 import fr.tutofac.config.NotFoundException;
+import fr.tutofac.notification.NotificationService;
 import fr.tutofac.tuteur.ProfilTuteur;
 import fr.tutofac.utilisateur.Role;
 import fr.tutofac.utilisateur.Utilisateur;
@@ -31,19 +32,22 @@ public class SeanceService {
     private final UtilisateurRepository utilisateurRepository;
     private final RechercheTuteurService rechercheService;
     private final EntityManager entityManager;
+    private final NotificationService notificationService;
 
     public SeanceService(
             SeanceRepository seanceRepository,
             BesoinRepository besoinRepository,
             UtilisateurRepository utilisateurRepository,
             RechercheTuteurService rechercheService,
-            EntityManager entityManager) {
+            EntityManager entityManager,
+            NotificationService notificationService) {
 
         this.seanceRepository = seanceRepository;
         this.besoinRepository = besoinRepository;
         this.utilisateurRepository = utilisateurRepository;
         this.rechercheService = rechercheService;
         this.entityManager = entityManager;
+        this.notificationService = notificationService;
     }
 
     // Liste les séances de l'établissement connecté
@@ -252,6 +256,9 @@ public class SeanceService {
             .setParameter("etudiantId", etudiantId)
             .executeUpdate();
         }
+
+        // Partie 4 : mail au tuteur et aux étudiants (envoyé après le commit)
+        notificationService.notifierAffectation(seance, profil.getUtilisateur(), idsUniques);
 
         return versDto(seance);
     }
