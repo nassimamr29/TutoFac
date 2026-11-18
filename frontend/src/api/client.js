@@ -19,6 +19,14 @@ export async function apiFetch(path, options = {}) {
     headers,
   });
 
+  // 401 avec un token : session expirée, on renvoie vers la connexion
+  if (response.status === 401 && token && !path.startsWith("/api/auth/")) {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    window.location.href = "/connexion";
+    throw new ApiError("Session expirée, veuillez vous reconnecter", 401);
+  }
+
   if (response.status === 204) return null;
 
   const contentType = response.headers.get("content-type") ?? "";
