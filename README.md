@@ -48,16 +48,20 @@ La branche `develop` contient les développements intégrés de l'équipe.
 
 ### 2. Configurer les variables d'environnement
 
-Créer un fichier `.env` à la racine du projet avec les variables attendues par Docker Compose.
+Créer le fichier `.env` à la racine du projet à partir de l'exemple fourni, qui contient des valeurs de démonstration :
 
-Les principales variables sont :
+```bash
+cp .env.example .env
+```
+
+Les variables sont :
 
 | Variable | Description |
 |---|---|
 | `POSTGRES_DB` | Nom de la base de données |
 | `POSTGRES_USER` | Utilisateur PostgreSQL |
 | `POSTGRES_PASSWORD` | Mot de passe PostgreSQL |
-| `JWT_SECRET` | Clé utilisée pour signer les tokens JWT |
+| `JWT_SECRET` | Clé utilisée pour signer les tokens JWT (32 caractères minimum) |
 | `JWT_EXPIRATION_MS` | Durée de validité des tokens JWT |
 
 Le fichier `.env` contient des informations sensibles et ne doit pas être envoyé sur GitHub.
