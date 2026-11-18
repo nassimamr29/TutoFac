@@ -6,29 +6,37 @@ const CONFIGURATION = {
     badge: "ESPACE GESTIONNAIRE",
     titre: "Organisez le tutorat universitaire",
     description:
-      "Gérez les besoins d'accompagnement, trouvez les tuteurs disponibles et planifiez les séances en quelques étapes.",
+      "Validez les candidatures, gérez les besoins d'accompagnement, recherchez des tuteurs et planifiez les séances.",
     cartes: [
       {
         numero: "01",
+        titre: "Validation des tuteurs",
+        description:
+          "Consultez les dossiers en attente, vérifiez les relevés de notes et prenez une décision.",
+        lien: "/validation-tuteurs",
+        action: "Consulter les candidatures",
+      },
+      {
+        numero: "02",
         titre: "Gestion des besoins",
         description:
-          "Consultez les demandes de tutorat et créez de nouveaux besoins pour les étudiants.",
+          "Créez les besoins de tutorat et suivez les demandes de votre établissement.",
         lien: "/besoins",
         action: "Gérer les besoins",
       },
       {
-        numero: "02",
+        numero: "03",
         titre: "Recherche de tuteurs",
         description:
-          "Identifiez les tuteurs correspondant à une matière et à un créneau horaire.",
+          "Identifiez les tuteurs qualifiés et disponibles dans les établissements partenaires.",
         lien: "/recherche",
         action: "Rechercher un tuteur",
       },
       {
-        numero: "03",
+        numero: "04",
         titre: "Affectation des séances",
         description:
-          "Organisez les séances de tutorat et consultez les affectations réalisées.",
+          "Planifiez les séances et consultez les affectations déjà réalisées.",
         lien: "/affectation",
         action: "Organiser une séance",
       },
@@ -39,7 +47,7 @@ const CONFIGURATION = {
     badge: "ESPACE TUTEUR",
     titre: "Partagez vos connaissances",
     description:
-      "Complétez votre profil académique, gérez vos disponibilités et participez à l'accompagnement des étudiants.",
+      "Complétez votre dossier académique et organisez vos disponibilités pour accompagner les étudiants.",
     cartes: [
       {
         numero: "01",
@@ -53,7 +61,7 @@ const CONFIGURATION = {
         numero: "02",
         titre: "Mes disponibilités",
         description:
-          "Ajoutez et gérez les créneaux pendant lesquels vous pouvez assurer du tutorat.",
+          "Ajoutez, modifiez ou supprimez vos créneaux de tutorat.",
         lien: "/disponibilites",
         action: "Gérer mon planning",
       },
@@ -62,18 +70,36 @@ const CONFIGURATION = {
 
   ADMIN: {
     badge: "ADMINISTRATION",
-    titre: "Bienvenue sur TutoFac",
+    titre: "Pilotez votre plateforme",
     description:
-      "Votre espace administrateur vous permet d'accéder à la plateforme.",
-    cartes: [],
+      "Retrouvez les utilisateurs et les établissements partenaires de TutoFac.",
+    cartes: [
+      {
+        numero: "01",
+        titre: "Administration",
+        description:
+          "Consultez les comptes utilisateurs et les établissements enregistrés.",
+        lien: "/administration",
+        action: "Accéder à l'administration",
+      },
+    ],
   },
 
   ETUDIANT: {
     badge: "ESPACE ÉTUDIANT",
     titre: "Bienvenue dans votre espace étudiant",
     description:
-      "TutoFac facilite l'accompagnement universitaire entre étudiants et tuteurs.",
-    cartes: [],
+      "Retrouvez vos informations personnelles et découvrez le réseau universitaire TutoFac.",
+    cartes: [
+      {
+        numero: "01",
+        titre: "Mon espace étudiant",
+        description:
+          "Consultez votre profil et les établissements partenaires.",
+        lien: "/espace-etudiant",
+        action: "Accéder à mon espace",
+      },
+    ],
   },
 };
 
@@ -91,7 +117,9 @@ export default function Accueil() {
     <main className="dashboard">
       <section className="hero">
         <div className="hero-content">
-          <div className="hero-badge">{contenu.badge}</div>
+          <div className="hero-badge">
+            {contenu.badge}
+          </div>
 
           <h1>{contenu.titre}</h1>
 
@@ -112,47 +140,36 @@ export default function Accueil() {
       <section className="dashboard-content">
         <div className="section-heading">
           <div>
-            <span className="section-label">TUTOFAC</span>
-            <h2>
-              {contenu.cartes.length > 0
-                ? "Que souhaitez-vous faire ?"
-                : "Votre espace personnel"}
-            </h2>
+            <span className="section-label">
+              TUTOFAC
+            </span>
+
+            <h2>Que souhaitez-vous faire ?</h2>
           </div>
         </div>
 
-        {contenu.cartes.length > 0 ? (
-          <div className="dashboard-grid">
-            {contenu.cartes.map((carte) => (
-              <Link
-                key={carte.lien}
-                className="dashboard-card"
-                to={carte.lien}
-              >
-                <span className="card-number">
-                  {carte.numero}
-                </span>
+        <div className="dashboard-grid">
+          {contenu.cartes.map((carte) => (
+            <Link
+              key={carte.lien}
+              className="dashboard-card"
+              to={carte.lien}
+            >
+              <span className="card-number">
+                {carte.numero}
+              </span>
 
-                <h3>{carte.titre}</h3>
+              <h3>{carte.titre}</h3>
 
-                <p>{carte.description}</p>
+              <p>{carte.description}</p>
 
-                <span className="card-action">
-                  {carte.action}
-                  <span aria-hidden="true">→</span>
-                </span>
-              </Link>
-            ))}
-          </div>
-        ) : (
-          <div className="dashboard-empty">
-            <h3>Espace personnel</h3>
-            <p>
-              Les fonctionnalités complémentaires de cet espace
-              ne sont pas encore disponibles dans cette version.
-            </p>
-          </div>
-        )}
+              <span className="card-action">
+                {carte.action}
+                <span aria-hidden="true">→</span>
+              </span>
+            </Link>
+          ))}
+        </div>
       </section>
     </main>
   );

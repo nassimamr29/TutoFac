@@ -1,24 +1,34 @@
-import { NavLink, Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
+
+const LIENS_PAR_ROLE = {
+  TUTEUR: [
+    { label: "Mon profil", chemin: "/profil" },
+    { label: "Mes disponibilités", chemin: "/disponibilites" },
+  ],
+
+  GESTIONNAIRE: [
+    { label: "Validation des tuteurs", chemin: "/validation-tuteurs" },
+    { label: "Gestion des besoins", chemin: "/besoins" },
+    { label: "Recherche de tuteurs", chemin: "/recherche" },
+    { label: "Affectation", chemin: "/affectation" },
+  ],
+
+  ADMIN: [
+    { label: "Administration", chemin: "/administration" },
+  ],
+
+  ETUDIANT: [
+    { label: "Mon espace", chemin: "/espace-etudiant" },
+  ],
+};
 
 export default function Navbar() {
   const { user, logout } = useAuth();
 
-  const liensParRole = {
-    TUTEUR: [
-      { label: "Mon profil", chemin: "/profil" },
-      { label: "Mes disponibilités", chemin: "/disponibilites" },
-    ],
-    GESTIONNAIRE: [
-      { label: "Gestion des besoins", chemin: "/besoins" },
-      { label: "Recherche de tuteurs", chemin: "/recherche" },
-      { label: "Affectation", chemin: "/affectation" },
-    ],
-    ADMIN: [],
-    ETUDIANT: [],
-  };
-
-  const liens = user ? liensParRole[user.role] ?? [] : [];
+  const liens = user
+    ? LIENS_PAR_ROLE[user.role] ?? []
+    : [];
 
   return (
     <header className="navbar">
