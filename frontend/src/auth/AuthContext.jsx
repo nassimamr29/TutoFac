@@ -15,7 +15,12 @@ export function AuthProvider({ children }) {
       jsonOptions("POST", { email, motDePasse }),
     );
     localStorage.setItem("token", result.token);
-    const nextUser = { role: result.role };
+    // On garde aussi l'établissement, renvoyé par /api/auth/login (null pour un ADMIN)
+    const nextUser = {
+      role: result.role,
+      etablissementId: result.etablissementId,
+      etablissementNom: result.etablissementNom,
+    };
     localStorage.setItem("user", JSON.stringify(nextUser));
     setUser(nextUser);
     return nextUser;

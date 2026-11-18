@@ -59,6 +59,11 @@ export default function Navbar() {
             </NavLink>
           ))}
 
+          {/* Établissement du compte connecté (absent pour un ADMIN) */}
+          {user.etablissementNom && (
+            <span className="nav-etablissement">{user.etablissementNom}</span>
+          )}
+
           <button
             type="button"
             className="secondary logout-button"
