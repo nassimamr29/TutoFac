@@ -1,33 +1,59 @@
-import { Link } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 
 export default function Navbar() {
   const { user, logout } = useAuth();
 
+  const liensParRole = {
+    TUTEUR: [
+      { label: "Mon profil", chemin: "/profil" },
+      { label: "Mes disponibilités", chemin: "/disponibilites" },
+    ],
+    GESTIONNAIRE: [
+      { label: "Gestion des besoins", chemin: "/besoins" },
+      { label: "Recherche de tuteurs", chemin: "/recherche" },
+      { label: "Affectation", chemin: "/affectation" },
+    ],
+    ADMIN: [],
+    ETUDIANT: [],
+  };
+
+  const liens = user ? liensParRole[user.role] ?? [] : [];
+
   return (
     <header className="navbar">
-      <Link className="brand" to="/accueil">TutoFac</Link>
+      <Link className="brand" to="/accueil">
+        Tuto<span>Fac</span>
+      </Link>
 
       {user && (
         <nav aria-label="Navigation principale">
-          <Link to="/accueil">Accueil</Link>
+          <NavLink
+            to="/accueil"
+            className={({ isActive }) =>
+              isActive ? "nav-link active" : "nav-link"
+            }
+          >
+            Accueil
+          </NavLink>
 
-          {user.role === "TUTEUR" && (
-            <>
-              <Link to="/profil">Mon profil</Link>
-              <Link to="/disponibilites">Mes disponibilités</Link>
-            </>
-          )}
+          {liens.map((lien) => (
+            <NavLink
+              key={lien.chemin}
+              to={lien.chemin}
+              className={({ isActive }) =>
+                isActive ? "nav-link active" : "nav-link"
+              }
+            >
+              {lien.label}
+            </NavLink>
+          ))}
 
-          {user.role === "GESTIONNAIRE" && (
-            <>
-              <Link to="/besoins">Gestion des besoins</Link>
-              <Link to="/recherche">Recherche de tuteurs</Link>
-              <Link to="/affectation">Affectation des séances</Link>
-            </>
-          )}
-
-          <button className="secondary" onClick={logout}>
+          <button
+            type="button"
+            className="secondary logout-button"
+            onClick={logout}
+          >
             Déconnexion
           </button>
         </nav>
