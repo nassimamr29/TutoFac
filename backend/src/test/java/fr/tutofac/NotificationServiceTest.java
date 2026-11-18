@@ -6,6 +6,8 @@ import fr.tutofac.seance.Seance;
 import fr.tutofac.utilisateur.Role;
 import fr.tutofac.utilisateur.Utilisateur;
 import fr.tutofac.utilisateur.UtilisateurRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,6 +27,7 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -39,14 +42,22 @@ class NotificationServiceTest {
     @Mock
     private UtilisateurRepository utilisateurs;
 
+    @Mock
+    private EntityManager entityManager;
+
+    @Mock
+    private Query requete;
+
     private NotificationService service;
     private Seance seance;
     private Utilisateur tuteur;
 
     @BeforeEach
     void preparer() {
-        service = new NotificationService(mailSender, utilisateurs, "noreply@tutofac.fr");
+        service = new NotificationService(mailSender, utilisateurs, entityManager, "noreply@tutofac.fr");
         seance = new Seance();
+        seance.setId(5L);
+        seance.setProfilTuteurId(3L);
         seance.setDebut(DEBUT);
         seance.setFin(FIN);
         seance.setLieuOuLien("Salle B204");
@@ -127,6 +138,67 @@ class NotificationServiceTest {
         EmailTemplates.Email email = EmailTemplates.affectationTuteur("Lina", DEBUT, FIN, "  ");
 
         assertTrue(email.corps().contains("Lieu ou lien : à préciser"));
+    }
+
+    // --- Modification, annulation, rappel : destinataires retrouvés depuis la séance ---
+
+    @Test
+    void annulationEnvoieUnMailAuTuteurEtAuxEtudiantsInscrits() {
+        destinatairesEnBase(10L, 20L);
+        when(utilisateurs.findAllById(List.of(10L, 20L))).thenReturn(List.of(
+                tuteur, utilisateur(20L, "Hugo", "etudiant1@tutofac.fr", Role.ETUDIANT)));
+
+        service.notifierAnnulation(seance);
+
+        ArgumentCaptor<SimpleMailMessage> captor = ArgumentCaptor.forClass(SimpleMailMessage.class);
+        verify(mailSender, times(2)).send(captor.capture());
+        assertEquals(List.of("tuteur1@tutofac.fr", "etudiant1@tutofac.fr"),
+                captor.getAllValues().stream().map(m -> m.getTo()[0]).toList());
+        assertTrue(captor.getValue().getSubject().contains("annulation"));
+        verify(requete).setParameter("profilId", 3L);
+        verify(requete).setParameter("seanceId", 5L);
+    }
+
+    @Test
+    void modificationEnvoieLesNouvellesInformations() {
+        destinatairesEnBase(10L);
+        when(utilisateurs.findAllById(List.of(10L))).thenReturn(List.of(tuteur));
+        seance.setLieuOuLien("Salle C101");
+
+        service.notifierModification(seance);
+
+        ArgumentCaptor<SimpleMailMessage> captor = ArgumentCaptor.forClass(SimpleMailMessage.class);
+        verify(mailSender).send(captor.capture());
+        assertTrue(captor.getValue().getText().contains("Lieu ou lien : Salle C101"));
+    }
+
+    @Test
+    void rappelSansParticipantNEnvoieRien() {
+        destinatairesEnBase();
+        when(utilisateurs.findAllById(List.of())).thenReturn(List.of());
+
+        service.notifierRappel(seance);
+
+        verifyNoInteractions(mailSender);
+    }
+
+    @Test
+    void lesQuatreTemplatesOntUnSujetDistinct() {
+        Set<String> sujets = Set.of(
+                EmailTemplates.affectationTuteur("Lina", DEBUT, FIN, null).sujet(),
+                EmailTemplates.rappel("Lina", DEBUT, FIN, null).sujet(),
+                EmailTemplates.modification("Lina", DEBUT, FIN, null).sujet(),
+                EmailTemplates.annulation("Lina", DEBUT, FIN, null).sujet());
+
+        assertEquals(4, sujets.size());
+        assertTrue(EmailTemplates.rappel("Lina", DEBUT, FIN, null).sujet().contains("rappel"));
+    }
+
+    // La requête SQL des destinataires renvoie des BIGINT (Long)
+    private void destinatairesEnBase(Long... ids) {
+        when(entityManager.createNativeQuery(anyString())).thenReturn(requete);
+        when(requete.setParameter(anyString(), any())).thenReturn(requete);
+        when(requete.getResultList()).thenReturn(List.of((Object[]) ids));
     }
 
     private static Utilisateur utilisateur(Long id, String prenom, String email, Role role) {

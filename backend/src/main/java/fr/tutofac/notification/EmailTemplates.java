@@ -13,6 +13,8 @@ public final class EmailTemplates {
 
     private EmailTemplates() {}
 
+    // --- Affectation : nouvelle séance ---
+
     public static Email affectationTuteur(String prenom, LocalDateTime debut, LocalDateTime fin, String lieu) {
         return new Email(
                 "TutoFac : nouvelle séance de tutorat le " + debut.format(DATE),
@@ -30,6 +32,42 @@ public final class EmailTemplates {
                         + "Votre établissement vous a inscrit(e) à une séance de tutorat.\n\n"
                         + creneau(debut, fin, lieu)
                         + "\nMerci de prévenir votre établissement en cas d'absence.\n\n"
+                        + signature());
+    }
+
+    // --- Rappel : la veille de la séance ---
+
+    public static Email rappel(String prenom, LocalDateTime debut, LocalDateTime fin, String lieu) {
+        return new Email(
+                "TutoFac : rappel, séance de tutorat le " + debut.format(DATE),
+                "Bonjour " + prenom + ",\n\n"
+                        + "Pour rappel, vous participez à une séance de tutorat.\n\n"
+                        + creneau(debut, fin, lieu)
+                        + "\nMerci de prévenir votre établissement en cas d'empêchement.\n\n"
+                        + signature());
+    }
+
+    // --- Modification : horaire ou lieu changé ---
+
+    public static Email modification(String prenom, LocalDateTime debut, LocalDateTime fin, String lieu) {
+        return new Email(
+                "TutoFac : modification de votre séance de tutorat",
+                "Bonjour " + prenom + ",\n\n"
+                        + "Une séance de tutorat à laquelle vous participez a été modifiée.\n"
+                        + "Voici les nouvelles informations :\n\n"
+                        + creneau(debut, fin, lieu)
+                        + "\n" + signature());
+    }
+
+    // --- Annulation ---
+
+    public static Email annulation(String prenom, LocalDateTime debut, LocalDateTime fin, String lieu) {
+        return new Email(
+                "TutoFac : annulation de la séance de tutorat du " + debut.format(DATE),
+                "Bonjour " + prenom + ",\n\n"
+                        + "La séance de tutorat suivante a été annulée :\n\n"
+                        + creneau(debut, fin, lieu)
+                        + "\nVotre établissement vous recontactera si une nouvelle séance est prévue.\n\n"
                         + signature());
     }
 
