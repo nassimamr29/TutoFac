@@ -48,6 +48,8 @@ services:
     image: axllent/mailpit:v1.21
     ports:
       - "8025:8025"
+      # SMTP accessible aussi pour un backend lancé hors Docker (mvn spring-boot:run)
+      - "1025:1025"
 
 volumes:
   pgdata:
