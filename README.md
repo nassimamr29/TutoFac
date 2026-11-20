@@ -569,5 +569,7 @@ Projet réalisé par :
 - Rayane Harkati
 - Saad Mimouni
 
+Projet hébergé sur Vercel
+
 **Master 2 Informatique — Parcours P2S**  
 **Université Sorbonne Paris Nord — 2026-2027**
